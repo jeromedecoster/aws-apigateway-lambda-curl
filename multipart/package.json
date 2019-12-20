@@ -1,0 +1,16 @@
+{
+  "name": "multipart",
+  "version": "1.0.0",
+  "description": "multipart",
+  "repository": "multipart",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "multipart",
+  "license": "MIT",
+  "dependencies": {
+    "aws-lambda-multipart-parser": "^0.1.3"
+  }
+}

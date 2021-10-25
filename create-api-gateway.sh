@@ -15,16 +15,16 @@ aws apigateway get-rest-apis \
     --region $AWS_REGION \
     --query "items[?name=='$API_GATEWAY_NAME'].[id]" \
     --output text | while read id; do \
-        echo "apigateway delete-rest-api"
+        log apigateway delete-rest-api
         aws apigateway delete-rest-api \
             --region $AWS_REGION \
             --rest-api-id "$id"
-        echo 'deleting an API Gateway... (5 seconds required)'
+        info deleting 'an API Gateway... (5 seconds required)'
         sleep 5
     done
 
 # create the API Gateway
-echo 'apigateway create-rest-api'
+log apigateway create-rest-api
 aws apigateway create-rest-api \
     --region $AWS_REGION \
     --name $API_GATEWAY_NAME \

@@ -15,27 +15,27 @@ API_GATEWAY_NAME=$1
 PART_PATH=$2
 INTEGRATION_TYPE=$3 # AWS | AWS_PROXY
 LAMBDA_NAME=$4
-echo "API_GATEWAY_NAME: $API_GATEWAY_NAME"
-echo "PART_PATH: $PART_PATH"
-echo "INTEGRATION_TYPE: $INTEGRATION_TYPE"
-echo "LAMBDA_NAME: $LAMBDA_NAME"
+log API_GATEWAY_NAME $API_GATEWAY_NAME
+log PART_PATH $PART_PATH
+log INTEGRATION_TYPE $INTEGRATION_TYPE
+log LAMBDA_NAME $LAMBDA_NAME
 
 # get the API Gateway id
 API_GATEWAY_ID=$(get_api_gateway_id "$API_GATEWAY_NAME")
-echo "API_GATEWAY_ID: $API_GATEWAY_ID"
+log API_GATEWAY_ID $API_GATEWAY_ID
 
 # get the root path id
 API_ROOT_ID=$(get_api_gateway_resource_id "$API_GATEWAY_ID" '/')
-echo "API_ROOT_ID: $API_ROOT_ID"
+log API_ROOT_ID $API_ROOT_ID
 
 # TODO: delete resource
 
 # get the `RESOURCE_ID` id
 RESOURCE_ID=$(get_api_gateway_resource_id "$API_GATEWAY_ID" "$PART_PATH")
-echo "RESOURCE_ID: $RESOURCE_ID"
+log RESOURCE_ID $RESOURCE_ID
 
 if [[ -n "$RESOURCE_ID" ]]; then
-    echo 'apigateway delete-resource'
+    log apigateway delete-resource
     aws apigateway delete-resource \
         --region $AWS_REGION \
         --rest-api-id $API_GATEWAY_ID \
@@ -43,7 +43,7 @@ if [[ -n "$RESOURCE_ID" ]]; then
 fi
 
 # create the `API_WITH_PROXY_RESOURCE_NAME` resource
-echo 'apigateway create-resource'
+log apigateway create-resource
 aws apigateway create-resource \
     --region $AWS_REGION \
     --rest-api-id $API_GATEWAY_ID \
@@ -53,9 +53,9 @@ aws apigateway create-resource \
 
 # get the `PART_PATH` id
 RESOURCE_ID=$(get_api_gateway_resource_id "$API_GATEWAY_ID" "$PART_PATH")
-echo "RESOURCE_ID: $RESOURCE_ID"
+log RESOURCE_ID $RESOURCE_ID
 
-echo 'apigateway put-method'
+log apigateway put-method
 aws apigateway put-method \
     --region $AWS_REGION \
     --rest-api-id $API_GATEWAY_ID \
@@ -65,10 +65,10 @@ aws apigateway put-method \
     --output table
 
 LAMBDA_ARN=$(get_lambda_arn "$LAMBDA_NAME")
-echo "LAMBDA_ARN: $LAMBDA_ARN"
+log LAMBDA_ARN $LAMBDA_ARN
 
 # setup the POST method integration request
-echo 'apigateway put-integration'
+log apigateway put-integration
 aws apigateway put-integration \
     --region $AWS_REGION \
     --rest-api-id $API_GATEWAY_ID \
@@ -82,14 +82,14 @@ aws apigateway put-integration \
 
 # get the API Gateway arn
 API_GATEWAY_ARN=$(get_api_gateway_arn "$API_GATEWAY_ID")
-echo "API_GATEWAY_ARN: $API_GATEWAY_ARN"
+log API_GATEWAY_ARN $API_GATEWAY_ARN
 
 # add lambda permission
 STATEMENT_ID=api-lambda-permission-$(cat /dev/urandom | tr -dc 'a-z' | fold -w 10 | head -n 1)
-echo "STATEMENT_ID: $STATEMENT_ID"
+log STATEMENT_ID $STATEMENT_ID
 
 # optimisation needed (clean previous permissions)
-echo 'lambda add-permission silently'
+log lambda add-permission silently
 aws lambda add-permission \
     --region $AWS_REGION \
     --function-name $LAMBDA_NAME \
@@ -99,7 +99,7 @@ aws lambda add-permission \
     --action lambda:InvokeFunction \
     &>/dev/null
 
-echo 'apigateway put-method-response'
+log apigateway put-method-response
 aws apigateway put-method-response \
     --region $AWS_REGION \
     --rest-api-id $API_GATEWAY_ID \
@@ -109,7 +109,7 @@ aws apigateway put-method-response \
     --response-models '{"application/json": "Empty"}' \
     --output table
 
-echo 'apigateway put-integration-response'
+log apigateway put-integration-response
 aws apigateway put-integration-response \
     --region $AWS_REGION \
     --rest-api-id $API_GATEWAY_ID \

@@ -12,7 +12,7 @@ source settings.sh
 
 # get the API Gateway id
 API_ID=$(get_api_gateway_id "$API_NAME")
-echo "API_ID: $API_ID"
+log API_ID $API_ID
 
 # write `API_ID` into settings.sh
 sed -i "s/API_ID=.*$/API_ID=$API_ID/" settings.sh

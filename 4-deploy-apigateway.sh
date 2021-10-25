@@ -8,12 +8,12 @@ cd "$dir"
 source settings.sh
 
 # publish the API, create the `dev` stage
-echo 'apigateway create-deployment'
+log apigateway create-deployment
 aws apigateway create-deployment \
     --region $AWS_REGION \
     --rest-api-id $API_ID \
     --stage-name dev \
     --output table
 
-echo 'creating a API Gateway deployment... (5 seconds required)'
+info creating 'a API Gateway deployment... (5 seconds required)'
 sleep 5

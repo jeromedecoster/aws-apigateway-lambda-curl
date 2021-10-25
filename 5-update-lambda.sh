@@ -8,11 +8,11 @@ cd multipart
 npm install
 
 # zip the code of the lambda function
-echo 'create zip...'
+log create zip
 rm --force multipart.zip
 zip --recurse-paths -9 multipart.zip index.js node_modules
 
-echo 'lambda update-function-code'
+log lambda update-function-code
 aws lambda update-function-code \
     --function-name $LAMBDA_NAME \
     --zip-file fileb://multipart.zip \
